@@ -1,0 +1,25 @@
+{
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#be1515",
+        "activityBar.activeBorder": "#063906",
+        "activityBar.background": "#be1515",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#063906",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "sash.hoverBorder": "#be1515",
+        "statusBar.background": "#901010",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#be1515",
+        "statusBarItem.remoteBackground": "#901010",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "titleBar.activeBackground": "#901010",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#90101099",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "#901010",
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": "file:///Users/matthew/workspace/avanti-dev-space-configure/.github/workflows/deploy.yaml"
+    }
+}
