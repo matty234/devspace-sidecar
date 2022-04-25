@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - "master"
-
+  tag:
+    branches:
+      - "master"
 jobs:
   build:
     name: Build
