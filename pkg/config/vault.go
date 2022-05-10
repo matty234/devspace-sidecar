@@ -9,8 +9,7 @@ import (
 )
 
 const (
-	serviceAccountFile  = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-	kubernetesMountPath = "auth/kubernetes" // TODO: make this configurable
+	serviceAccountFile = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 )
 
 type VaultConfiguration struct {
@@ -34,6 +33,10 @@ func (v *VaultConfiguration) GetClient() (*vault.Client, error) {
 	client, err := vault.NewClient(config)
 	if err != nil {
 		return nil, err
+	}
+
+	if v.Namespace != "" {
+		client.SetNamespace(v.Namespace)
 	}
 
 	if v.Token != "" && !v.UseKubernetes {
@@ -66,10 +69,6 @@ func (v *VaultConfiguration) GetClient() (*vault.Client, error) {
 		client.SetToken(sec.Auth.ClientToken)
 		return client, nil
 
-	}
-
-	if v.Namespace != "" {
-		client.SetNamespace(v.Namespace)
 	}
 
 	return client, nil
