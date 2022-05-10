@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	vault "github.com/hashicorp/vault/api"
+	"github.com/hashicorp/vault/command/agent/auth"
+	vaultKube "github.com/hashicorp/vault/command/agent/auth/kubernetes"
 	"github.com/matty234/dev-space-configure/pkg/config"
 )
 
@@ -23,6 +25,25 @@ type VaultCredentialsProvider struct {
 func NewVaultCredentialsProvider(vaultConfig config.VaultConfiguration) (*VaultCredentialsProvider, error) {
 	config := vault.DefaultConfig()
 
+	if vaultConfig.UseKubernetes {
+		am, err := vaultKube.NewKubernetesAuthMethod(&auth.AuthConfig{
+			Config: map[string]string{}{
+				"role": vaultConfig.Namespace,
+			}
+			
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		config.ConfigureTLS(&vault.TLSConfig{
+			Insecure: true,
+		})
+
+		am.Authenticate()
+
+		config("kubernetes", am)
+	}
 	// Set the address of the Vault server
 	config.Address = vaultConfig.Address
 
