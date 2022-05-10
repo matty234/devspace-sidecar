@@ -30,9 +30,8 @@ type KubernetesServiceMetaProvider struct {
 	namespace string
 }
 
-func NewKubernetesServiceMetaProvider(cfg config.KubernetesConfig) (ServiceMetaProvider, error) {
+func NewKubernetesServiceMetaProvider(cfg *config.KubernetesConfig) (ServiceMetaProvider, error) {
 	var k8scfg *rest.Config
-
 	if cfg.UseClusterConfig {
 		var err error
 		k8scfg, err = rest.InClusterConfig()

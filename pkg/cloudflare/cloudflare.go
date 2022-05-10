@@ -17,10 +17,10 @@ type DNSProvider interface {
 
 type CloudflareDNSProvider struct {
 	client *cf.API
-	config config.CloudflareConfig
+	config *config.CloudflareConfig
 }
 
-func NewCloudflareDNSProvider(config config.CloudflareConfig, token string) (DNSProvider, error) {
+func NewCloudflareDNSProvider(config *config.CloudflareConfig, token string) (DNSProvider, error) {
 	cf, err := cf.New(token, config.Email)
 	if err != nil {
 		return nil, err

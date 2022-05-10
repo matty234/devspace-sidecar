@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	vault "github.com/hashicorp/vault/api"
-	"github.com/hashicorp/vault/command/agent/auth"
-	vaultKube "github.com/hashicorp/vault/command/agent/auth/kubernetes"
 	"github.com/matty234/dev-space-configure/pkg/config"
 )
 
@@ -22,44 +20,14 @@ type VaultCredentialsProvider struct {
 	PkiVault      string
 }
 
-func NewVaultCredentialsProvider(vaultConfig config.VaultConfiguration) (*VaultCredentialsProvider, error) {
-	config := vault.DefaultConfig()
-
-	if vaultConfig.UseKubernetes {
-		am, err := vaultKube.NewKubernetesAuthMethod(&auth.AuthConfig{
-			Config: map[string]string{}{
-				"role": vaultConfig.Namespace,
-			}
-			
-		})
-		if err != nil {
-			return nil, err
-		}
-
-		config.ConfigureTLS(&vault.TLSConfig{
-			Insecure: true,
-		})
-
-		am.Authenticate()
-
-		config("kubernetes", am)
-	}
-	// Set the address of the Vault server
-	config.Address = vaultConfig.Address
-
-	vc, err := vault.NewClient(config)
+func NewVaultCredentialsProvider(vaultConfig *config.VaultConfiguration) (*VaultCredentialsProvider, error) {
+	vaultClient, err := vaultConfig.GetClient()
 	if err != nil {
 		return nil, err
 	}
 
-	vc.SetNamespace(vaultConfig.Namespace)
-
-	if vaultConfig.Token != "" {
-		vc.SetToken(vaultConfig.Token)
-	}
-
 	return &VaultCredentialsProvider{
-		vaultClient:   vc,
+		vaultClient:   vaultClient,
 		KeyValueVault: vaultConfig.Vaults.KeyValueVault,
 		PkiVault:      vaultConfig.Vaults.PkiVault,
 	}, nil
