@@ -32,6 +32,8 @@ type KubernetesServiceMetaProvider struct {
 
 func NewKubernetesServiceMetaProvider(cfg *config.KubernetesConfig) (ServiceMetaProvider, error) {
 	var k8scfg *rest.Config
+
+	var namespace = cfg.Namespace
 	if cfg.UseClusterConfig {
 		var err error
 		k8scfg, err = rest.InClusterConfig()
@@ -68,7 +70,8 @@ func NewKubernetesServiceMetaProvider(cfg *config.KubernetesConfig) (ServiceMeta
 	}
 
 	return &KubernetesServiceMetaProvider{
-		coreapi: clientset.CoreV1(),
+		coreapi:   clientset.CoreV1(),
+		namespace: namespace,
 	}, nil
 }
 
