@@ -32,10 +32,12 @@ var envoyKeySetupCmd = &cobra.Command{
 			log.Fatalf("config validation failed, %v", err)
 		}
 
-		ctx := context.Background()
-		bringup(ctx, cfg)
+		go func() {
+			ctx := context.Background()
+			bringup(ctx, cfg)
+		}()
 		<-cmd.Context().Done()
-		teardown(ctx, cfg)
+		teardown(context.Background(), cfg)
 
 	},
 }
@@ -45,17 +47,19 @@ func init() {
 }
 
 func bringup(ctx context.Context, cfg config.Config) {
-
+	log.Print("[INFO] Starting up...")
 	v, err := credentialsprovider.NewVaultCredentialsProvider(cfg.VaultConfiguration)
 	if err != nil {
 		log.Fatalf("Error getting credentials: %v", err)
 	}
 
+	log.Print("[INFO] Getting cloudflare credentials...")
 	cloudflaretoken, err := v.GetCloudflareCredentials(cfg.Domains.RootDomain)
 	if err != nil {
 		log.Fatalf("Error getting credentials: %v", err)
 	}
 
+	log.Print("[INFO] Creating tls credentials...")
 	certs, err := v.GetTLSCredentials(cfg.Domains.RootDomain, cfg.Domains.Subdomain)
 	if err != nil {
 		log.Fatalf("Error getting credentials: %v", err)

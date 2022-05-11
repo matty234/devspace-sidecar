@@ -50,8 +50,9 @@ func (vcp *VaultCredentialsProvider) GetCloudflareCredentials(roothost string) (
 		}
 	}
 
+	path := fmt.Sprintf("%s/data/cloudflare", vcp.KeyValueVault)
 	logicalvault := vcp.vaultClient.Logical()
-	credentials, err := logicalvault.Read(fmt.Sprintf("%s/data/cloudflare/%s", vcp.KeyValueVault, roothost))
+	credentials, err := logicalvault.Read(path)
 	if err != nil {
 		return "", err
 	}
@@ -60,12 +61,21 @@ func (vcp *VaultCredentialsProvider) GetCloudflareCredentials(roothost string) (
 		return "", fmt.Errorf("credentials not found")
 	}
 
-	value, ok := credentials.Data["data"].(map[string]interface{})
-	if !ok {
-		return "", fmt.Errorf("could not find value in credentials")
+	if credentials.Data == nil {
+		return "", fmt.Errorf("credentials not found")
 	}
 
-	return value["token"].(string), nil
+	cloudflareCredentials, ok := credentials.Data["data"].(map[string]interface{})
+	if !ok {
+		return "", fmt.Errorf("credentials not a map")
+	}
+
+	cloudflareKey, ok := cloudflareCredentials[roothost].(string)
+	if !ok {
+		return "", fmt.Errorf("credentials not a string")
+	}
+
+	return cloudflareKey, nil
 }
 
 func (vcp *VaultCredentialsProvider) GetTLSCredentials(roothost, host string) (*Credentials, error) {
