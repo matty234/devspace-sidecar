@@ -63,5 +63,19 @@ func (c *Credentials) WriteToFileSystem(rootDir string) error {
 		return fmt.Errorf("error writing CA file: %v", err)
 	}
 
+	// Write the certificate chain
+	chainPath := filepath.Join(rootDir, "chain.crt")
+	chainFile, err := os.Create(chainPath)
+	if err != nil {
+		return fmt.Errorf("error creating chain file: %v", err)
+	}
+
+	newLine := []byte("\n")
+
+	_, err = chainFile.Write(append(c.certificate, append(newLine, c.ca...)...))
+	if err != nil {
+		return fmt.Errorf("error writing chain file: %v", err)
+	}
+
 	return nil
 }

@@ -87,7 +87,7 @@ func bringup(ctx context.Context, cfg config.Config) {
 	}
 
 	log.Printf("[INFO] Creating DNS record for %s", lb.LoadBalancerHost)
-	err = cf.CreateDNSRecord(ctx, cfg.Domains.RootDomain, cfg.Domains.Subdomain, "example.com")
+	err = cf.CreateDNSRecord(ctx, cfg.Domains.RootDomain, cfg.Domains.Subdomain, lb.LoadBalancerHost)
 	if err != nil {
 		log.Fatalf("could not create DNS record: %v", err)
 	}
