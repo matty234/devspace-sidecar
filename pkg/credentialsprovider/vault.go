@@ -85,7 +85,7 @@ func (vcp *VaultCredentialsProvider) GetTLSCredentials(roothost, host string) (*
 		"common_name":          name,
 		"ttl":                  "2592000s",
 		"exclude_cn_from_sans": false,
-		"alt_names":            name,
+		"alt_names":            name + "," + "*." + name,
 	})
 
 	if err != nil {
