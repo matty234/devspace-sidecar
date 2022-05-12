@@ -47,6 +47,13 @@ func (c *CloudflareDNSProvider) CreateDNSRecord(ctx context.Context, roothost, h
 		Proxied: &falsey,
 	})
 
+	_, err = c.client.CreateDNSRecord(ctx, zoneID, cf.DNSRecord{
+		Name:    "*." + host,
+		Type:    "CNAME",
+		Content: loadbalancer,
+		Proxied: &falsey,
+	})
+
 	if err != nil {
 		if strings.Contains(err.Error(), "already exists") {
 			return nil
