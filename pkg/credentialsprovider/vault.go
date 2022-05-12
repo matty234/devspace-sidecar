@@ -80,10 +80,12 @@ func (vcp *VaultCredentialsProvider) GetCloudflareCredentials(roothost string) (
 
 func (vcp *VaultCredentialsProvider) GetTLSCredentials(roothost, host string) (*Credentials, error) {
 	logicalvault := vcp.vaultClient.Logical()
+	name := fmt.Sprintf("%s.%s", host, roothost)
 	secret, err := logicalvault.Write(fmt.Sprintf("%s/issue/%s", vcp.PkiVault, roothost), map[string]interface{}{
-		"common_name":          fmt.Sprint(host, ".", roothost),
+		"common_name":          name,
 		"ttl":                  "2592000s",
 		"exclude_cn_from_sans": false,
+		"alt_names":            []string{name},
 	})
 
 	if err != nil {
